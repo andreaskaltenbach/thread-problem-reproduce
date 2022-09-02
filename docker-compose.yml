@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  web:
+    build:
+      context: .
+      target: base
+    command: python manage.py runserver 0.0.0.0:80
+    env_file: .env-local
+    environment:
+      - SECRET_KEY="k6hn=p%ci1r70clu7txcv)pmna=8+n3oyz)l6n%yz#_h%vpylh"
+    depends_on:
+      - db
+    networks:
+      - bauer
+    ports:
+      - 8000:80
+    volumes:
+      - ".:/app:rw"
+      - "./data:/data:rw"
+
+  db:
+    image: postgres:13.6-alpine
+    networks:
+      - bauer
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_DB: "db"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    volumes:
+      - ".:/app:rw"
+      - "./data/db:/var/lib/postgresql/data:rw"
+
+networks:
+  bauer:
+
